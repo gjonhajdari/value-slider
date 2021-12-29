@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Value slider</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel='icon' type='image/x-icon' href='./assets/slider.svg'>
+	<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css'>
+	<link rel="stylesheet" href="./assets/style.css">
+	<script src='https://cdn.jsdelivr.net/npm/vue@2.6.12'></script>
+	<script src="./js/vue-clipboard2-master/dist/vue-clipboard.min.js"></script>
+	<script src="./js/components/slider.js"></script>
+	<script src="./js/components/clipboard.js"></script>
+</head>
+
+<body>
+	<!-- Root element -->
+	<div id="app" class="container">
+
+		<div class="columns mt-6">
+			<!-- Showcase div	 -->
+			<div class="column">
+				<div class="showcase" :style="styleObject">
+					<h2 class="is-size-4 has-text-weight-semibold">Showcase</h1>
+					<p class="mt-2">Use the sliders to adjust the box shadow of this element</p>
+				</div>
+			</div>
+			<!-- Sliders -->
+			<div class="column">
+				<div class="control has-text-centered">
+					<!-- X - axis -->
+					<slider 
+						slider-name="Offset - X" 
+						:slider-value="x_axis" 
+						starting-value="-50" 
+						max-value="50" 
+						v-model="x_axis">
+					</slider>
+					<!-- Y - axis -->
+					<slider 
+						slider-name="Offset - Y" 
+						:slider-value="y_axis" 
+						starting-value="-50" 
+						max-value="50" 
+						v-model="y_axis">
+					</slider>
+					<!-- Blur -->
+					<slider 
+						slider-name="Blur" 
+						:slider-value="blur" 
+						starting-value="0" 
+						max-value="100" 
+						v-model="blur">
+					</slider>
+					<!-- Spread -->
+					<slider 
+						slider-name="Spread" 
+						:slider-value="spread" 
+						starting-value="0" 
+						max-value="100" 
+						v-model="spread">
+					</slider>
+				</div>
+			</div>
+		</div>
+
+		<hr>
+
+		<!-- Output -->
+		<div class="output">
+			<h2 class="is-size-5">CSS output</h2>
+
+			<input id="textValue" type="text" v-model="text=textValue.text">
+
+			<div class="level mt-3">
+				<p class="code">
+					<span class="property">box-shadow</span>:
+					<span class="value">{{ x_axis }}</span><span class="parameter">px</span>
+					<span class="value">{{ y_axis }}</span><span class="parameter">px</span>
+					<span class="value">{{ blur }}</span><span class="parameter">px</span>
+					<span class="value">{{ spread }}</span><span class="parameter">px</span>
+					<span class="value">{{ color }}</span>;
+				</p>
+	
+				<button class="btn ml-6" v-clipboard:copy="text" @mouseleave="isHidden=true" @click="copyText">
+					<clipboard></clipboard>
+					<span class="tooltip" :class="{ hidden: isHidden }">Copied</span>
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+
+		const app = new Vue({
+			el: '#app',
+
+			components: {
+				'slider': slider,
+				'clipboard': clipboard
+			},
+
+			data: {
+				x_axis: -20,
+				y_axis: 30,
+				blur: 3,
+				spread: 15,
+				color: 'rgba(0,0,0,0.1)',
+				text: '',
+				isHidden: true
+			},
+
+			methods: {
+				copyText: function() {
+					this.isHidden = false
+				}
+			},
+
+			computed: {
+				styleObject() {
+					return {
+						boxShadow: `
+							${this.x_axis}px
+							${this.y_axis}px
+							${this.blur}px
+							${this.spread}px
+							${this.color}
+						`
+					}
+				},
+				textValue() {
+					return {
+						text: 'box-shadow: '.concat(
+							this.x_axis + 'px ',
+							this.y_axis + 'px ',
+							this.blur + 'px',
+							this.spread + 'px ',
+							this.color + ';')
+					}
+				}
+			}
+		});
+
+	</script>
+</body>
+
+</html>
